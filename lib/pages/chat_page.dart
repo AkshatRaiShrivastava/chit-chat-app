@@ -34,12 +34,14 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    //scrollDown();
     // add listener to focus node
     myFocusNode.addListener(() {
       if (myFocusNode.hasFocus) {
         Future.delayed(Duration(milliseconds: 500), () => scrollDown());
       }
     });
+    Future.delayed(Duration(milliseconds: 300), () => scrollDown());
   }
 
   @override
@@ -55,7 +57,6 @@ class _ChatPageState extends State<ChatPage> {
     _scrollController.animateTo(_scrollController.position.maxScrollExtent,
         duration: Duration(milliseconds: 400), curve: Curves.fastOutSlowIn);
   }
-
   // send message
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
