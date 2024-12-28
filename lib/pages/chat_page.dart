@@ -1,10 +1,14 @@
 import 'dart:developer';
+import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:minimal_chat_app/components/chat_bubble.dart';
 import 'package:minimal_chat_app/services/auth/auth_service.dart';
 import 'package:minimal_chat_app/services/chat/chat_service.dart';
+import 'package:provider/provider.dart';
+
+import '../themes/theme_provider.dart';
 
 class ChatPage extends StatefulWidget {
   final String receiverEmail;
@@ -17,7 +21,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
-
+  final ScrollController _scrollController = ScrollController();
   // chat and auth services
   final ChatService _chatService = ChatService();
 
@@ -36,10 +40,7 @@ class _ChatPageState extends State<ChatPage> {
         Future.delayed(Duration(milliseconds: 500), () => scrollDown());
       }
     });
-
-    Future.delayed(Duration(milliseconds: 500), () => scrollDown());
   }
-
 
   @override
   void dispose() {
@@ -49,7 +50,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   //scroll controller
-  final ScrollController _scrollController = ScrollController();
+
   void scrollDown() {
     _scrollController.animateTo(_scrollController.position.maxScrollExtent,
         duration: Duration(milliseconds: 400), curve: Curves.fastOutSlowIn);
@@ -67,10 +68,9 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
+    //scrollDown();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.receiverEmail),
@@ -81,11 +81,25 @@ class _ChatPageState extends State<ChatPage> {
       ),
       body: Column(
         children: [
+
+          Expanded(
+            child: Stack(
+              alignment: Alignment.topCenter,
+              children: [
+                _buildMessageList(),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child:  _buildUserInput(),
+                )
+              ],
+            ),
+          ),
+
           //display all messages
-          Expanded(child: _buildMessageList()),
+
 
           //user input
-          _buildUserInput(),
+
         ],
       ),
     );
@@ -102,9 +116,10 @@ class _ChatPageState extends State<ChatPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Text("Loading");
           }
-
+          // scrollDown();
           return ListView(
-            controller: _scrollController,
+            padding: EdgeInsets.only(bottom: 70),
+              controller: _scrollController,
               children: snapshot.data!.docs
                   .map((doc) => _buildMessageItem(doc))
                   .toList());
@@ -123,6 +138,7 @@ class _ChatPageState extends State<ChatPage> {
 
     return Container(
         alignment: alignment,
+
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
           child: Column(
@@ -137,31 +153,51 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Widget _buildUserInput() {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 10, left: 20, right: 20),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              focusNode: myFocusNode,
-              controller: _messageController,
-              decoration: InputDecoration(
-                  hintText: "Type message",
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20))),
-            ),
+    bool isDarkMode = Provider.of<ThemeProvider>(context,listen:false).isDarkMode;
+    return ClipRect(
+
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 0,sigmaY: 0),
+        child: Container(
+          decoration: BoxDecoration(// Semi-transparent black overlay
+            borderRadius: BorderRadius.circular(20), // Rounded corners
           ),
-          Container(
-            decoration:
-                BoxDecoration(shape: BoxShape.circle, color: Colors.green),
-            margin: EdgeInsets.only(left: 10),
-            child: IconButton(
-                onPressed: () {
-                  sendMessage();
-                },
-                icon: Icon(Icons.arrow_upward_rounded)),
-          ),
-        ],
+          margin: EdgeInsets.all(10),
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            child:Row(
+
+                children: [
+                  Expanded(
+                    child: TextField(
+                      focusNode: myFocusNode,
+                      controller: _messageController,
+                      decoration: InputDecoration(
+                        hintText: "Type message...",
+                        fillColor: Theme.of(context).colorScheme.primary,
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+
+                        ),
+                      ),
+
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  CircleAvatar(
+                    backgroundColor: Colors.green,
+                    child: IconButton(
+                      icon: Icon(Icons.send, color: Colors.white),
+                      onPressed: () {
+                        sendMessage();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+
+
+        ),
       ),
     );
   }
