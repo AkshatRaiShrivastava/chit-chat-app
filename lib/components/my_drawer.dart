@@ -11,6 +11,7 @@ class MyDrawer extends StatelessWidget {
       final auth = AuthService();
       auth.signout();
     }
+
     return Drawer(
       backgroundColor: Theme.of(context).colorScheme.background,
       child: Column(
@@ -21,31 +22,42 @@ class MyDrawer extends StatelessWidget {
             color: Theme.of(context).colorScheme.primary,
             size: 40,
           )),
-          Padding(padding: EdgeInsets.only(left: 25),
+          Padding(
+            padding: EdgeInsets.only(left: 25),
             child: ListTile(
               title: Text('H O M E'),
               leading: Icon(Icons.home),
-              onTap: (){
+              onTap: () {
                 Navigator.pop(context);
               },
             ),
           ),
-          Padding(padding: EdgeInsets.only(left: 25),
+          Padding(
+            padding: EdgeInsets.only(left: 25),
             child: ListTile(
               title: Text('S E T T I N G S'),
               leading: Icon(Icons.settings),
-              onTap: (){
-                Navigator.popAndPushNamed(context,'/settings');
+              onTap: () {
+                Navigator.popAndPushNamed(context, '/settings');
               },
             ),
           ),
-          Padding(padding: EdgeInsets.only(left: 25),
+          Spacer(),
+          Padding(
+            padding: EdgeInsets.only(left: 25),
             child: ListTile(
               title: Text('L O G O U T'),
               leading: Icon(Icons.logout),
               onTap: logout,
             ),
           ),
+          Text(
+            "Made with ❤️ by Akshat",
+            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+          ),
+          SizedBox(
+            height: 20,
+          )
         ],
       ),
     );
