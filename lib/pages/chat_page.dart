@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'dart:ui';
-
+import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:minimal_chat_app/components/chat_bubble.dart';
@@ -57,6 +57,7 @@ class _ChatPageState extends State<ChatPage> {
     _scrollController.animateTo(_scrollController.position.maxScrollExtent,
         duration: Duration(milliseconds: 400), curve: Curves.fastOutSlowIn);
   }
+
   // send message
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
@@ -82,7 +83,6 @@ class _ChatPageState extends State<ChatPage> {
       ),
       body: Column(
         children: [
-
           Expanded(
             child: Stack(
               alignment: Alignment.topCenter,
@@ -90,17 +90,11 @@ class _ChatPageState extends State<ChatPage> {
                 _buildMessageList(),
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child:  _buildUserInput(),
+                  child: _buildUserInput(),
                 )
               ],
             ),
           ),
-
-          //display all messages
-
-
-          //user input
-
         ],
       ),
     );
@@ -115,11 +109,11 @@ class _ChatPageState extends State<ChatPage> {
             return Text("Error");
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text("Loading");
+            return CircularProgressIndicator(color: Colors.green,);
           }
           // scrollDown();
           return ListView(
-            padding: EdgeInsets.only(bottom: 70),
+              padding: EdgeInsets.only(bottom: 100),
               controller: _scrollController,
               children: snapshot.data!.docs
                   .map((doc) => _buildMessageItem(doc))
@@ -132,14 +126,14 @@ class _ChatPageState extends State<ChatPage> {
 
     //is current user
     bool isCurrentUser = data['senderId'] == _authService.getCurrentUser()!.uid;
-
+    Timestamp timestamp = data['timestamp'];
+    DateTime time = timestamp.toDate();
     //align message to the right if sender is the current user , otherwise left
     var alignment =
         isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
-
+    String formattedTime = DateFormat('hh:mm a').format(time);
     return Container(
         alignment: alignment,
-
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
           child: Column(
@@ -148,56 +142,63 @@ class _ChatPageState extends State<ChatPage> {
                   : CrossAxisAlignment.start,
               children: [
                 ChatBubble(
-                    message: data["message"], isCurrentUser: isCurrentUser)
+                    message: data["message"],
+                    isCurrentUser: isCurrentUser,
+                    time: time.hour.toString()),
+                Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 5),
+                    child: Text(
+                      formattedTime,
+                      style: TextStyle(
+                          fontSize: 10,
+                          color: Theme.of(context).colorScheme.secondary),
+                    )),
               ]),
         ));
   }
 
   Widget _buildUserInput() {
-    bool isDarkMode = Provider.of<ThemeProvider>(context,listen:false).isDarkMode;
+    final themeNotifier = Provider.of<ThemeProvider>(context);
+    bool isDarkMode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     return ClipRect(
-
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 0,sigmaY: 0),
+        filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
         child: Container(
-          decoration: BoxDecoration(// Semi-transparent black overlay
+          decoration: BoxDecoration(
+            // Semi-transparent black overlay
             borderRadius: BorderRadius.circular(20), // Rounded corners
           ),
           margin: EdgeInsets.all(10),
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            child:Row(
-
-                children: [
-                  Expanded(
-                    child: TextField(
-                      focusNode: myFocusNode,
-                      controller: _messageController,
-                      decoration: InputDecoration(
-                        hintText: "Type message...",
-                        fillColor: Theme.of(context).colorScheme.primary,
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-
-                        ),
-                      ),
-
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  focusNode: myFocusNode,
+                  controller: _messageController,
+                  decoration: InputDecoration(
+                    hintText: "Type message...",
+                    fillColor: Theme.of(context).colorScheme.primary,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  SizedBox(width: 10),
-                  CircleAvatar(
-                    backgroundColor: Colors.green,
-                    child: IconButton(
-                      icon: Icon(Icons.send, color: Colors.white),
-                      onPressed: () {
-                        sendMessage();
-                      },
-                    ),
-                  ),
-                ],
+                ),
               ),
-
-
+              SizedBox(width: 10),
+              CircleAvatar(
+                backgroundColor: themeNotifier.themeColor,
+                child: IconButton(
+                  icon: Icon(Icons.arrow_upward_rounded, color: Colors.white),
+                  onPressed: () {
+                    sendMessage();
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
