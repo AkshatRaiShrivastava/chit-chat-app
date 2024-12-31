@@ -17,7 +17,7 @@ class ThemeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleTheme() async{
+  void toggleTheme() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (_themeData == lightMode) {
@@ -33,9 +33,9 @@ class ThemeProvider extends ChangeNotifier {
     if (color != 0) {
       _themeColor = Color(color);
     }
-    if(isDark){
+    if (isDark) {
       themeData = darkMode;
-    }else{
+    } else {
       themeData = lightMode;
     }
   }

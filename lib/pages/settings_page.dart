@@ -53,8 +53,8 @@ class SettingsPage extends StatelessWidget {
               //switch toggle
               ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(themeNotifier.themeColor)
-                ),
+                    backgroundColor:
+                        WidgetStatePropertyAll(themeNotifier.themeColor)),
                 onPressed: () async {
                   Color? newColor = await showDialog(
                     context: context,
@@ -62,7 +62,6 @@ class SettingsPage extends StatelessWidget {
                   );
                   if (newColor != null) {
                     themeNotifier.setThemeColor(newColor);
-
                   }
                 },
                 child: Text(""),
@@ -105,7 +104,9 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
           child: Text('Cancel'),
         ),
         TextButton(
-          onPressed: (){Navigator.of(context).pop(selectedColor); },
+          onPressed: () {
+            Navigator.of(context).pop(selectedColor);
+          },
           child: Text('Select'),
         ),
       ],

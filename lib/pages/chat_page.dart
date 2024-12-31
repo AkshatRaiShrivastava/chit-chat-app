@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:ui';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -70,6 +71,71 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
+  Offset _tapPosition = Offset.zero;
+  void _getTapPosition(TapDownDetails tapPosition) {
+    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+
+    _tapPosition = renderBox.globalToLocal(tapPosition.globalPosition);
+    log(_tapPosition.toString());
+  }
+
+  void _showContextMenu(context, textToCopy, docId,senderId) async {
+    final RenderObject? overlay =
+        Overlay.of(context)?.context.findRenderObject();
+    final result = await showMenu(
+        context: context,
+        position: RelativeRect.fromRect(
+            Rect.fromLTWH(_tapPosition.dx, _tapPosition.dy, 15, 10),
+            Rect.fromLTWH(0, 0, overlay!.paintBounds.size.height,
+                overlay!.paintBounds.size.width)),
+        items: [
+          const PopupMenuItem(
+            child: Row(children: [
+              Icon(Icons.copy),
+              SizedBox(
+                width: 5,
+              ),
+              Text(
+                'Copy',
+                style: TextStyle(fontSize: 16),
+              )
+            ]),
+            value: 'copy',
+          ),
+          const PopupMenuItem(
+            child: Row(children: [
+              Icon(
+                Icons.delete,
+                color: Colors.red,
+              ),
+              SizedBox(
+                width: 5,
+              ),
+              Text(
+                'Delete',
+                style: TextStyle(fontSize: 16),
+              )
+            ]),
+            value: 'delete',
+          ),
+        ]);
+    if (result == 'copy') {
+      Clipboard.setData(ClipboardData(text: textToCopy));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Copied to clipboard!')),
+      );
+    }else if (result == 'delete'){
+      if(senderId == _authService.getCurrentUser()!.uid){
+        await _chatService.deleteMessage(docId, widget.receiverId);
+      }
+      else{
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not delete this message')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     //scrollDown();
@@ -109,7 +175,9 @@ class _ChatPageState extends State<ChatPage> {
             return Text("Error");
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(color: Colors.green,);
+            return CircularProgressIndicator(
+              color: Colors.green,
+            );
           }
           // scrollDown();
           return ListView(
@@ -141,10 +209,18 @@ class _ChatPageState extends State<ChatPage> {
                   ? CrossAxisAlignment.end
                   : CrossAxisAlignment.start,
               children: [
-                ChatBubble(
-                    message: data["message"],
-                    isCurrentUser: isCurrentUser,
-                    time: time.hour.toString()),
+                GestureDetector(
+                  onTapDown: (position) {
+                    _getTapPosition(position);
+                  },
+                  onLongPress: () {
+                    _showContextMenu(context, data["message"], doc.id, data['senderId']);
+                  },
+                  child: ChatBubble(
+                      message: data["message"],
+                      isCurrentUser: isCurrentUser,
+                      time: time.hour.toString()),
+                ),
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 5),
                     child: Text(

@@ -17,15 +17,14 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  final theme_color = prefs.getInt('themeColor')??0;
-  final isDark = prefs.getBool('isDark')??false;
-  ThemeProvider themeNotifier = ThemeProvider(theme_color,isDark);
+  final theme_color = prefs.getInt('themeColor') ?? 0;
+  final isDark = prefs.getBool('isDark') ?? false;
+  ThemeProvider themeNotifier = ThemeProvider(theme_color, isDark);
   await themeNotifier.loadThemeColor();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(ChangeNotifierProvider(
-    create: (context) => ThemeProvider(theme_color,isDark
-    ),
-    child:  MyApp(theme_color:theme_color),
+    create: (context) => ThemeProvider(theme_color, isDark),
+    child: MyApp(theme_color: theme_color),
   ));
 }
 

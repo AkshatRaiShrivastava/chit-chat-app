@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:minimal_chat_app/models/message.dart';
@@ -41,6 +43,28 @@ class ChatService {
 
 
   }
+
+  //delete messages
+  Future<void> deleteMessage(String messageId, String receiverId) async {
+    try {
+      final String currentUserId = _auth.currentUser!.uid;
+      List<String> ids = [currentUserId, receiverId];
+      ids.sort();
+      String chatroomId = ids.join('_');
+      await _firestore
+      .collection("chat_rooms")
+      .doc(chatroomId)
+          .collection('messages')
+          .doc(messageId)
+          .delete();
+      log('Message deleted successfully.');
+    } catch (e) {
+      log('Failed to delete message: $e');
+    }
+  }
+
+
+
   //get messages
   Stream<QuerySnapshot> getMessages(String userId, otherUserId) {
     // construct a chatroom id for the two users
