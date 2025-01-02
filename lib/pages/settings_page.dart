@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:minimal_chat_app/services/auth/auth_service.dart';
 import 'package:minimal_chat_app/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -8,6 +9,7 @@ class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
   @override
   Widget build(BuildContext context) {
+    AuthService _authService = AuthService();
     final themeNotifier = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
@@ -66,6 +68,37 @@ class SettingsPage extends StatelessWidget {
                 },
                 child: Text(""),
               ),
+            ],
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              borderRadius: BorderRadius.circular(12)),
+          margin: EdgeInsets.all(25),
+          padding: EdgeInsets.all(15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              //dark mode
+              Text("Reset password"),
+              //switch toggle
+              ElevatedButton(
+                  onPressed: () {
+                    try {
+                      _authService.resetPassword(_authService.getCurrentUser()!.email);
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Reset link sent to your email id')));
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(e.toString())));
+                    }
+                  },
+                  child: Text(
+                    "Reset",
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.inversePrimary),
+                  ))
             ],
           ),
         ),
