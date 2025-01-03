@@ -1,18 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Message {
+class ImageMessage {
   final String senderID;
   final String senderEmail;
   final String receiverID;
   final String message;
+  final String type;
   final Timestamp timestamp;
 
-  Message(
+  ImageMessage(
       {required this.senderID,
-      required this.senderEmail,
-      required this.receiverID,
-      required this.message,
-      required this.timestamp});
+        required this.senderEmail,
+        required this.receiverID,
+        required this.message,
+        required this.type,
+        required this.timestamp});
 
   // convert to a map
 
@@ -22,6 +24,7 @@ class Message {
       'senderEmail' : senderEmail,
       'receiverId' : receiverID,
       'message' : message,
+      'type' : type,
       'timestamp' : timestamp
     };
   }

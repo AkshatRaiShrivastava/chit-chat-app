@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../services/auth/auth_service.dart';
+import '../themes/theme_provider.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
@@ -12,6 +14,7 @@ class MyDrawer extends StatelessWidget {
       auth.signout();
     }
 
+    final themeNotifier = Provider.of<ThemeProvider>(context);
     return Drawer(
       backgroundColor: Theme.of(context).colorScheme.background,
       child: Column(
@@ -51,10 +54,20 @@ class MyDrawer extends StatelessWidget {
               onTap: logout,
             ),
           ),
-          Text(
-            "Made with ❤️ by Akshat",
-            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-          ),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Text(
+              "Made with ",
+              style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
+            ),
+            Icon(
+              Icons.favorite,
+              color: themeNotifier.themeColor,
+            ),
+            Text(
+              " by Akshat",
+              style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
+            ),
+          ]),
           SizedBox(
             height: 20,
           )

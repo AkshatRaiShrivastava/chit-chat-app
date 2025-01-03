@@ -104,7 +104,7 @@ class LoginPage extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(30),
                                   color:
-                                      Theme.of(context).colorScheme.secondary,
+                                      Theme.of(context).colorScheme.inversePrimary,
                                 ),
                                 width: 100,
                               ),
