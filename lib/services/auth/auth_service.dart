@@ -43,15 +43,26 @@ class AuthService {
     }
   }
 
+  //change username
+  Future<void> changeUsername(String newName) async{
+    try{
+      _firestore.collection("Users")
+      .doc(getCurrentUser()!.uid)
+      .update({'name':newName});
+    }catch(e){
+      throw Exception(e.toString());
+    }
+  }
+
   //signup with email and password
-  Future<UserCredential> signupWithEmailPAssword(String email, password) async {
+  Future<UserCredential> signupWithEmailPAssword(String fullName, email, password) async {
     try {
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
       _firestore
           .collection("Users")
           .doc(userCredential.user!.uid)
-          .set({'uid': userCredential.user!.uid, 'email': email});
+          .set({'uid': userCredential.user!.uid, 'email': email , 'name' : fullName});
       return userCredential;
     } on FirebaseAuthException catch (e) {
       throw Exception(e.code);

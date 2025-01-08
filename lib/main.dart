@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:minimal_chat_app/firebase_options.dart';
+import 'package:minimal_chat_app/pages/entry_page.dart';
 import 'package:minimal_chat_app/pages/home_page.dart';
 import 'package:minimal_chat_app/pages/login_page.dart';
 import 'package:minimal_chat_app/pages/register_page.dart';
@@ -50,7 +51,7 @@ class MyApp extends StatelessWidget {
       routes: {
         // '/login' : (context)=>LoginPage(onTap: () {  },),
         // '/register' : (context)=>RegisterPage(onTap: () {  },),
-        '/home': (context) => HomePage(),
+        '/home': (context) => EntryPage(),
         '/settings': (context) => SettingsPage()
       },
     );

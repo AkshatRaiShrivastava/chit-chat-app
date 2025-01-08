@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/services.dart';
+import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:minimal_chat_app/components/image_bubble.dart';
 import 'package:minimal_chat_app/models/message.dart';
@@ -21,7 +22,12 @@ import '../themes/theme_provider.dart';
 class ChatPage extends StatefulWidget {
   final String receiverEmail;
   final String receiverId;
-  ChatPage({super.key, required this.receiverId, required this.receiverEmail});
+  final String receiverName;
+  const ChatPage(
+      {super.key,
+      required this.receiverId,
+      required this.receiverEmail,
+      required this.receiverName});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -304,8 +310,21 @@ class _ChatPageState extends State<ChatPage> {
     //scrollDown();
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.receiverEmail),
-        centerTitle: true,
+        title: Row(
+          
+          children: [
+          ProfilePicture(
+              name: widget.receiverName, radius: 20, fontsize: 20,
+            ),
+            SizedBox(width: 10,),
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(
+              widget.receiverName,
+              style: TextStyle(fontSize: 18),
+            ),
+            Text(widget.receiverEmail, style: TextStyle(fontSize: 16)),
+          ]),
+        ]),
         backgroundColor: Colors.transparent,
         foregroundColor: Theme.of(context).colorScheme.primary,
         elevation: 0,

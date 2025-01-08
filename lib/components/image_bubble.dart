@@ -20,19 +20,18 @@ class ImageBubble extends StatelessWidget {
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
     return Container(
-      constraints: BoxConstraints(
-          maxWidth: 300
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-      margin: EdgeInsets.only(bottom: 5),
-      decoration: BoxDecoration(
-          color: isCurrentUser
-              ? themeNotifier.themeColor
-              : isDarkMode
-              ? Colors.grey.shade800
-              : Colors.grey.shade400,
-          borderRadius: BorderRadius.circular(20)),
-      child: Image.network(url)
-    );
+        constraints: BoxConstraints(maxWidth: 300),
+        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+        margin: EdgeInsets.only(bottom: 5),
+        decoration: BoxDecoration(
+            color: isCurrentUser
+                ? themeNotifier.themeColor
+                : isDarkMode
+                    ? Colors.grey.shade800
+                    : Colors.grey.shade400,
+            borderRadius: BorderRadius.circular(20)),
+        child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: Image.network(url)));
   }
 }

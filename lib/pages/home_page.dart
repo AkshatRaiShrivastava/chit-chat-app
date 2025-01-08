@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:minimal_chat_app/services/auth/auth_service.dart';
 import 'package:minimal_chat_app/services/chat/chat_service.dart';
+import 'package:minimal_chat_app/themes/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../components/my_drawer.dart';
 import '../components/user_tile.dart';
@@ -21,14 +23,15 @@ class HomePage extends StatelessWidget {
         foregroundColor: Theme.of(context).colorScheme.primary,
         elevation: 0,
       ),
-      drawer: MyDrawer(),
-      body: _buildUserList(),
+     // drawer: MyDrawer(),
+      body: _buildUserList(context),
     );
   }
 
   // build a list of users except for the current logged in user
 
-  Widget _buildUserList() {
+  Widget _buildUserList(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeProvider>(context);
     return StreamBuilder(
         stream: _chatService.getUserStream(),
         builder: (context, snapshot) {
@@ -36,8 +39,9 @@ class HomePage extends StatelessWidget {
             return const Text("Error");
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator(color: Colors.green,);
+            return CircularProgressIndicator(color: themeNotifier.themeColor,);
           }
+          
           return ListView(
             children: snapshot.data!
                 .map<Widget>(
@@ -53,7 +57,8 @@ class HomePage extends StatelessWidget {
     // display all users exceppt the current user
     if (userData["email"] != _authService.getCurrentUser()?.email) {
       return UserTile(
-          text: userData["email"],
+          email: userData["email"],
+          name: userData["name"],
           onTap: () {
             Navigator.push(
                 context,
@@ -61,6 +66,7 @@ class HomePage extends StatelessWidget {
                     builder: (context) => ChatPage(
                           receiverEmail: userData["email"],
                           receiverId: userData["uid"],
+                          receiverName: userData["name"],
                         )));
           });
     } else {

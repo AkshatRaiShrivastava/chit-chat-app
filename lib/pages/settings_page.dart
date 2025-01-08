@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:minimal_chat_app/services/auth/auth_service.dart';
 import 'package:minimal_chat_app/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
@@ -9,11 +10,12 @@ class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
   @override
   Widget build(BuildContext context) {
-    AuthService _authService = AuthService();
+    AuthService authService = AuthService();
     final themeNotifier = Provider.of<ThemeProvider>(context);
+    final TextEditingController _newName = TextEditingController();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: const Text('Settings'),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         foregroundColor: Theme.of(context).colorScheme.primary,
@@ -24,13 +26,93 @@ class SettingsPage extends StatelessWidget {
           decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary,
               borderRadius: BorderRadius.circular(12)),
-          margin: EdgeInsets.all(25),
-          padding: EdgeInsets.all(15),
+          margin: const EdgeInsets.all(25),
+          padding: const EdgeInsets.all(15),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               //dark mode
-              Text("Dark Mode"),
+              const Text("Change your name"),
+              ElevatedButton(
+                  onPressed: () {
+                    showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(top: 10),
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color:
+                                      Theme.of(context).colorScheme.inversePrimary,
+                                ),
+                                width: 100,
+                              ),
+                              SizedBox(
+                                height: 40,
+                              ),
+                              TextField(
+                                controller: _newName,
+                                decoration: InputDecoration(
+                                    hintText: 'Full name',
+                                    fillColor:
+                                        Theme.of(context).colorScheme.tertiary,
+                                    filled: true,
+                                    hintStyle: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .inversePrimary)),
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .inversePrimary),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    authService.changeUsername(_newName.text);
+                                    Navigator.pop(context);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'Changed your name !')));
+                                  },
+                                  style: ButtonStyle(
+                                      backgroundColor: WidgetStatePropertyAll(
+                                          Theme.of(context)
+                                              .colorScheme
+                                              .inversePrimary)),
+                                  child: Text("Change")),
+                            ],
+                          ),
+                          );
+                        });
+                  },
+                  child: Text(
+                    "Change",
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.inversePrimary),
+                  ))
+            ],
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.all(25),
+          padding: const EdgeInsets.all(15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              //dark mode
+              const Text("Dark Mode"),
               //switch toggle
               CupertinoSwitch(
                   value: Provider.of<ThemeProvider>(context, listen: false)
@@ -45,13 +127,13 @@ class SettingsPage extends StatelessWidget {
           decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary,
               borderRadius: BorderRadius.circular(12)),
-          margin: EdgeInsets.all(25),
-          padding: EdgeInsets.all(15),
+          margin: const EdgeInsets.all(25),
+          padding: const EdgeInsets.all(15),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               //dark mode
-              Text("Change theme color"),
+              const Text("Change theme color"),
               //switch toggle
               ElevatedButton(
                 style: ButtonStyle(
@@ -66,7 +148,7 @@ class SettingsPage extends StatelessWidget {
                     themeNotifier.setThemeColor(newColor);
                   }
                 },
-                child: Text(""),
+                child: const Text(""),
               ),
             ],
           ),
@@ -75,23 +157,24 @@ class SettingsPage extends StatelessWidget {
           decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary,
               borderRadius: BorderRadius.circular(12)),
-          margin: EdgeInsets.all(25),
-          padding: EdgeInsets.all(15),
+          margin: const EdgeInsets.all(25),
+          padding: const EdgeInsets.all(15),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               //dark mode
-              Text("Reset password"),
+              const Text("Reset password"),
               //switch toggle
               ElevatedButton(
                   onPressed: () {
                     try {
-                      _authService.resetPassword(_authService.getCurrentUser()!.email);
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      authService
+                          .resetPassword(authService.getCurrentUser()!.email);
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                           content: Text('Reset link sent to your email id')));
                     } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(e.toString())));
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(e.toString())));
                     }
                   },
                   child: Text(
@@ -102,6 +185,35 @@ class SettingsPage extends StatelessWidget {
             ],
           ),
         ),
+        const SizedBox(
+          height: 100,
+        ),
+        Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: ElevatedButton(
+                style: const ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(Colors.red),
+                ),
+                onPressed: () {
+                  authService.signout();
+                },
+                child: const Row(mainAxisSize: MainAxisSize.min, children: [
+                  Icon(
+                    Iconsax.logout,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    'Logout',
+                    style: TextStyle(color: Colors.white),
+                  )
+                ]),
+              ),
+            ))
       ]),
     );
   }
@@ -110,7 +222,7 @@ class SettingsPage extends StatelessWidget {
 class ColorPickerDialog extends StatefulWidget {
   final Color initialColor;
 
-  ColorPickerDialog(this.initialColor);
+  const ColorPickerDialog(this.initialColor, {super.key});
 
   @override
   _ColorPickerDialogState createState() => _ColorPickerDialogState();
@@ -124,7 +236,7 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Pick a Color'),
+      title: const Text('Pick a Color'),
       content: SingleChildScrollView(
         child: BlockPicker(
           pickerColor: widget.initialColor,
@@ -134,13 +246,13 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(null),
-          child: Text('Cancel'),
+          child: const Text('Cancel'),
         ),
         TextButton(
           onPressed: () {
             Navigator.of(context).pop(selectedColor);
           },
-          child: Text('Select'),
+          child: const Text('Select'),
         ),
       ],
     );

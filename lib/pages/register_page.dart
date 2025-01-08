@@ -7,8 +7,8 @@ import '../services/auth/auth_service.dart';
 class RegisterPage extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _fullName = TextEditingController();
   final void Function()? onTap;
   RegisterPage({super.key, required this.onTap});
 
@@ -16,7 +16,7 @@ class RegisterPage extends StatelessWidget {
     final _auth = AuthService();
     //if(_confirmPasswordController == _passwordController.text){
       try{
-        _auth.signupWithEmailPAssword(_emailController.text, _confirmPasswordController.text);
+        _auth.signupWithEmailPAssword(_fullName.text , _emailController.text, _confirmPasswordController.text);
       }catch (e){
         showDialog(context: context, builder: (context)=>AlertDialog(
           title: Text(e.toString()),
@@ -48,6 +48,23 @@ class RegisterPage extends StatelessWidget {
                 "Welcome Back, you've been missed",
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.primary, fontSize: 16),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              TextField(
+                controller: _fullName,
+                onChanged: (val) {
+                  log(val);
+                },
+                decoration: InputDecoration(
+                    hintText: 'Full Name',
+                    fillColor: Theme.of(context).colorScheme.tertiary,
+                    filled: true,
+                    hintStyle: TextStyle(
+                        color: Theme.of(context).colorScheme.inversePrimary)),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.inversePrimary),
               ),
               SizedBox(
                 height: 20,

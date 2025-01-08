@@ -114,6 +114,8 @@ class ChatService {
     }
   }
 
+  
+
   Future<String> uploadToCloudinary(File file) async {
     try {
       final Uri uri = Uri.parse(

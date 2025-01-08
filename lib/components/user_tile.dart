@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 
 class UserTile extends StatelessWidget {
-  final String text;
+  final String email;
+  final String name;
   final void Function()? onTap;
-  const UserTile({super.key, required this.text, required this.onTap});
+  const UserTile({super.key,required this.name, required this.email, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +21,17 @@ class UserTile extends StatelessWidget {
         padding: EdgeInsets.all(20),
         child: Row(
           children: [
-            Icon(Icons.person),
-            SizedBox(width: 20,),
-            Text(text)
+            ProfilePicture(
+              name: name, radius: 20, fontsize: 20,
+            ),
+            SizedBox(width: 15,),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(name!, style: TextStyle(fontSize: 18),),
+                Text(email,style: TextStyle(fontSize: 12),),
+              ],
+            )
           ],
         ),
       ),
