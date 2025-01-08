@@ -21,200 +21,207 @@ class SettingsPage extends StatelessWidget {
         foregroundColor: Theme.of(context).colorScheme.primary,
         elevation: 0,
       ),
-      body: Column(children: [
-        Container(
-          decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              borderRadius: BorderRadius.circular(12)),
-          margin: const EdgeInsets.all(25),
-          padding: const EdgeInsets.all(15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(bottom: 80),
+          child: Column(
+            
             children: [
-              //dark mode
-              const Text("Change your name"),
-              ElevatedButton(
-                  onPressed: () {
-                    showModalBottomSheet(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(top: 10),
-                                height: 10,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color:
-                                      Theme.of(context).colorScheme.inversePrimary,
-                                ),
-                                width: 100,
-                              ),
-                              SizedBox(
-                                height: 40,
-                              ),
-                              TextField(
-                                controller: _newName,
-                                decoration: InputDecoration(
-                                    hintText: 'Full name',
-                                    fillColor:
-                                        Theme.of(context).colorScheme.tertiary,
-                                    filled: true,
-                                    hintStyle: TextStyle(
+            Container(
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(12)),
+              margin: const EdgeInsets.all(25),
+              padding: const EdgeInsets.all(15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  //dark mode
+                  const Text("Change your name"),
+                  ElevatedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(top: 10),
+                                    height: 10,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      color:
+                                          Theme.of(context).colorScheme.inversePrimary,
+                                    ),
+                                    width: 100,
+                                  ),
+                                  SizedBox(
+                                    height: 40,
+                                  ),
+                                  TextField(
+                                    controller: _newName,
+                                    decoration: InputDecoration(
+                                        hintText: 'Full name',
+                                        fillColor:
+                                            Theme.of(context).colorScheme.tertiary,
+                                        filled: true,
+                                        hintStyle: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .inversePrimary)),
+                                    style: TextStyle(
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .inversePrimary)),
-                                style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .inversePrimary),
+                                            .inversePrimary),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        authService.changeUsername(_newName.text);
+                                        Navigator.pop(context);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                                content: Text(
+                                                    'Changed your name !')));
+                                      },
+                                      style: ButtonStyle(
+                                          backgroundColor: WidgetStatePropertyAll(
+                                              Theme.of(context)
+                                                  .colorScheme
+                                                  .inversePrimary)),
+                                      child: Text("Change")),
+                                ],
                               ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    authService.changeUsername(_newName.text);
-                                    Navigator.pop(context);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                'Changed your name !')));
-                                  },
-                                  style: ButtonStyle(
-                                      backgroundColor: WidgetStatePropertyAll(
-                                          Theme.of(context)
-                                              .colorScheme
-                                              .inversePrimary)),
-                                  child: Text("Change")),
-                            ],
-                          ),
-                          );
-                        });
-                  },
-                  child: Text(
-                    "Change",
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.inversePrimary),
-                  ))
-            ],
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              borderRadius: BorderRadius.circular(12)),
-          margin: const EdgeInsets.all(25),
-          padding: const EdgeInsets.all(15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              //dark mode
-              const Text("Dark Mode"),
-              //switch toggle
-              CupertinoSwitch(
-                  value: Provider.of<ThemeProvider>(context, listen: false)
-                      .isDarkMode,
-                  onChanged: (value) =>
-                      Provider.of<ThemeProvider>(context, listen: false)
-                          .toggleTheme())
-            ],
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              borderRadius: BorderRadius.circular(12)),
-          margin: const EdgeInsets.all(25),
-          padding: const EdgeInsets.all(15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              //dark mode
-              const Text("Change theme color"),
-              //switch toggle
-              ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        WidgetStatePropertyAll(themeNotifier.themeColor)),
-                onPressed: () async {
-                  Color? newColor = await showDialog(
-                    context: context,
-                    builder: (_) => ColorPickerDialog(themeNotifier.themeColor),
-                  );
-                  if (newColor != null) {
-                    themeNotifier.setThemeColor(newColor);
-                  }
-                },
-                child: const Text(""),
+                              );
+                            });
+                      },
+                      child: Text(
+                        "Change",
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.inversePrimary),
+                      ))
+                ],
               ),
-            ],
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              borderRadius: BorderRadius.circular(12)),
-          margin: const EdgeInsets.all(25),
-          padding: const EdgeInsets.all(15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              //dark mode
-              const Text("Reset password"),
-              //switch toggle
-              ElevatedButton(
-                  onPressed: () {
-                    try {
-                      authService
-                          .resetPassword(authService.getCurrentUser()!.email);
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text('Reset link sent to your email id')));
-                    } catch (e) {
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(SnackBar(content: Text(e.toString())));
-                    }
-                  },
-                  child: Text(
-                    "Reset",
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.inversePrimary),
-                  ))
-            ],
-          ),
-        ),
-        const SizedBox(
-          height: 100,
-        ),
-        Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 20),
-              child: ElevatedButton(
-                style: const ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(Colors.red),
-                ),
-                onPressed: () {
-                  authService.signout();
-                },
-                child: const Row(mainAxisSize: MainAxisSize.min, children: [
-                  Icon(
-                    Iconsax.logout,
-                    color: Colors.white,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    'Logout',
-                    style: TextStyle(color: Colors.white),
-                  )
-                ]),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(12)),
+              margin: const EdgeInsets.all(25),
+              padding: const EdgeInsets.all(15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  //dark mode
+                  const Text("Dark Mode"),
+                  //switch toggle
+                  CupertinoSwitch(
+                      value: Provider.of<ThemeProvider>(context, listen: false)
+                          .isDarkMode,
+                      onChanged: (value) =>
+                          Provider.of<ThemeProvider>(context, listen: false)
+                              .toggleTheme())
+                ],
               ),
-            ))
-      ]),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(12)),
+              margin: const EdgeInsets.all(25),
+              padding: const EdgeInsets.all(15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  //dark mode
+                  const Text("Change theme color"),
+                  //switch toggle
+                  ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStatePropertyAll(themeNotifier.themeColor)),
+                    onPressed: () async {
+                      Color? newColor = await showDialog(
+                        context: context,
+                        builder: (_) => ColorPickerDialog(themeNotifier.themeColor),
+                      );
+                      if (newColor != null) {
+                        themeNotifier.setThemeColor(newColor);
+                      }
+                    },
+                    child: const Text(""),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(12)),
+              margin: const EdgeInsets.all(25),
+              padding: const EdgeInsets.all(15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  //dark mode
+                  const Text("Reset password"),
+                  //switch toggle
+                  ElevatedButton(
+                      onPressed: () {
+                        try {
+                          authService
+                              .resetPassword(authService.getCurrentUser()!.email);
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text('Reset link sent to your email id')));
+                        } catch (e) {
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(SnackBar(content: Text(e.toString())));
+                        }
+                      },
+                      child: Text(
+                        "Reset",
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.inversePrimary),
+                      ))
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 100,
+            ),
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: ElevatedButton(
+                    style: const ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(Colors.red),
+                    ),
+                    onPressed: () {
+                      authService.signout();
+                    },
+                    child: const Row(mainAxisSize: MainAxisSize.min, children: [
+                      Icon(
+                        Iconsax.logout,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Logout',
+                        style: TextStyle(color: Colors.white),
+                      )
+                    ]),
+                  ),
+                ))
+          ]),
+        ),
+      ),
     );
   }
 }

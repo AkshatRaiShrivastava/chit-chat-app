@@ -4,7 +4,6 @@ import 'package:minimal_chat_app/services/chat/chat_service.dart';
 import 'package:minimal_chat_app/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../components/my_drawer.dart';
 import '../components/user_tile.dart';
 import 'chat_page.dart';
 

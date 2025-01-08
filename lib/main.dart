@@ -1,15 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/services.dart';
 import 'package:minimal_chat_app/firebase_options.dart';
 import 'package:minimal_chat_app/pages/entry_page.dart';
-import 'package:minimal_chat_app/pages/home_page.dart';
-import 'package:minimal_chat_app/pages/login_page.dart';
-import 'package:minimal_chat_app/pages/register_page.dart';
 import 'package:minimal_chat_app/pages/settings_page.dart';
 import 'package:minimal_chat_app/services/auth/auth_gate.dart';
-import 'package:minimal_chat_app/themes/light_mode.dart';
 import 'package:minimal_chat_app/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

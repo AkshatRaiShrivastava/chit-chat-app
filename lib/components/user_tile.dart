@@ -28,7 +28,7 @@ class UserTile extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name!, style: TextStyle(fontSize: 18),),
+                Text(name, style: TextStyle(fontSize: 18),),
                 Text(email,style: TextStyle(fontSize: 12),),
               ],
             )

@@ -51,6 +51,7 @@ dependencies:
   iconsax: ^0.0.8
   any_link_preview: ^3.0.2
   flutter_profile_picture: ^2.0.0
+  rxdart: ^0.28.0
 
 dev_dependencies:
   flutter_test:

@@ -1,9 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import '../services/auth/auth_service.dart';
 
+// ignore: must_be_immutable
 class LoginPage extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _resetEmailController = TextEditingController();
@@ -103,8 +102,9 @@ class LoginPage extends StatelessWidget {
                                 height: 10,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(30),
-                                  color:
-                                      Theme.of(context).colorScheme.inversePrimary,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary,
                                 ),
                                 width: 100,
                               ),

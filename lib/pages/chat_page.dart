@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:minimal_chat_app/components/image_bubble.dart';
-import 'package:minimal_chat_app/models/message.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/intl.dart';
@@ -75,7 +74,7 @@ class _ChatPageState extends State<ChatPage> {
       final ImagePicker picker = ImagePicker();
       final List<XFile> images = await picker.pickMultiImage(imageQuality: 70);
 
-      if (images == null || images.isEmpty) {
+      if (images.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('No images selected')),
         );
@@ -169,7 +168,7 @@ class _ChatPageState extends State<ChatPage> {
   void _showContextMenu(
       context, textToCopy, docId, senderId, bool isImage) async {
     final RenderObject? overlay =
-        Overlay.of(context)?.context.findRenderObject();
+        Overlay.of(context).context.findRenderObject();
     if (isImage) {
       final result = await showMenu(
           context: context,
@@ -228,7 +227,7 @@ class _ChatPageState extends State<ChatPage> {
           position: RelativeRect.fromRect(
               Rect.fromLTWH(_tapPosition.dx, _tapPosition.dy, 15, 10),
               Rect.fromLTWH(0, 0, overlay!.paintBounds.size.height,
-                  overlay!.paintBounds.size.width)),
+                  overlay.paintBounds.size.width)),
           items: [
             PopupMenuItem(
               child: Row(children: [
@@ -453,8 +452,6 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget _buildUserInput() {
     final themeNotifier = Provider.of<ThemeProvider>(context);
-    bool isDarkMode =
-        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
