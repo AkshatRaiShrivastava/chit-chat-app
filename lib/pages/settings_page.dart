@@ -24,9 +24,7 @@ class SettingsPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.only(bottom: 80),
-          child: Column(
-            
-            children: [
+          child: Column(children: [
             Container(
               decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.primary,
@@ -44,65 +42,71 @@ class SettingsPage extends StatelessWidget {
                             context: context,
                             builder: (BuildContext context) {
                               return Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.only(top: 10),
-                                    height: 10,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30),
-                                      color:
-                                          Theme.of(context).colorScheme.inversePrimary,
-                                    ),
-                                    width: 100,
-                                  ),
-                                  SizedBox(
-                                    height: 40,
-                                  ),
-                                  TextField(
-                                    controller: _newName,
-                                    decoration: InputDecoration(
-                                        hintText: 'Full name',
-                                        fillColor:
-                                            Theme.of(context).colorScheme.tertiary,
-                                        filled: true,
-                                        hintStyle: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .inversePrimary)),
-                                    style: TextStyle(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.only(top: 10),
+                                      height: 10,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .inversePrimary),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        authService.changeUsername(_newName.text);
-                                        Navigator.pop(context);
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                                content: Text(
-                                                    'Changed your name !')));
-                                      },
-                                      style: ButtonStyle(
-                                          backgroundColor: WidgetStatePropertyAll(
-                                              Theme.of(context)
+                                            .inversePrimary,
+                                      ),
+                                      width: 100,
+                                    ),
+                                    const SizedBox(
+                                      height: 40,
+                                    ),
+                                    TextField(
+                                      controller: _newName,
+                                      decoration: InputDecoration(
+                                          hintText: 'Full name',
+                                          fillColor: Theme.of(context)
+                                              .colorScheme
+                                              .tertiary,
+                                          filled: true,
+                                          hintStyle: TextStyle(
+                                              color: Theme.of(context)
                                                   .colorScheme
                                                   .inversePrimary)),
-                                      child: Text("Change")),
-                                ],
-                              ),
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .inversePrimary),
+                                    ),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                    ElevatedButton(
+                                        onPressed: () {
+                                          authService
+                                              .changeUsername(_newName.text);
+                                          Navigator.pop(context);
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                                  content: Text(
+                                                      'Changed your name !')));
+                                        },
+                                        style: ButtonStyle(
+                                            backgroundColor:
+                                                WidgetStatePropertyAll(
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .inversePrimary)),
+                                        child: const Text("Change")),
+                                  ],
+                                ),
                               );
                             });
                       },
                       child: Text(
                         "Change",
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.inversePrimary),
+                            color:
+                                Theme.of(context).colorScheme.inversePrimary),
                       ))
                 ],
               ),
@@ -120,6 +124,7 @@ class SettingsPage extends StatelessWidget {
                   const Text("Dark Mode"),
                   //switch toggle
                   CupertinoSwitch(
+                      trackColor: themeNotifier.themeColor,
                       value: Provider.of<ThemeProvider>(context, listen: false)
                           .isDarkMode,
                       onChanged: (value) =>
@@ -147,7 +152,8 @@ class SettingsPage extends StatelessWidget {
                     onPressed: () async {
                       Color? newColor = await showDialog(
                         context: context,
-                        builder: (_) => ColorPickerDialog(themeNotifier.themeColor),
+                        builder: (_) =>
+                            ColorPickerDialog(themeNotifier.themeColor),
                       );
                       if (newColor != null) {
                         themeNotifier.setThemeColor(newColor);
@@ -173,19 +179,22 @@ class SettingsPage extends StatelessWidget {
                   ElevatedButton(
                       onPressed: () {
                         try {
-                          authService
-                              .resetPassword(authService.getCurrentUser()!.email);
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                              content: Text('Reset link sent to your email id')));
+                          authService.resetPassword(
+                              authService.getCurrentUser()!.email);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Reset link sent to your email id')));
                         } catch (e) {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(SnackBar(content: Text(e.toString())));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(e.toString())));
                         }
                       },
                       child: Text(
                         "Reset",
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.inversePrimary),
+                            color:
+                                Theme.of(context).colorScheme.inversePrimary),
                       ))
                 ],
               ),

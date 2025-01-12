@@ -7,14 +7,18 @@ class ImageMessage {
   final String message;
   final String type;
   final Timestamp timestamp;
+  final bool isViewOnce;
+  final bool hasOpened;
 
   ImageMessage(
       {required this.senderID,
+      required this.hasOpened,
         required this.senderEmail,
         required this.receiverID,
         required this.message,
         required this.type,
-        required this.timestamp});
+        required this.isViewOnce,
+        required this.timestamp,});
 
   // convert to a map
 
@@ -25,6 +29,8 @@ class ImageMessage {
       'receiverId' : receiverID,
       'message' : message,
       'type' : type,
+      'hasOpened' : hasOpened,
+      'isViewOnce' : isViewOnce,
       'timestamp' : timestamp
     };
   }

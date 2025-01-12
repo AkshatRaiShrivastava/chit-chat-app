@@ -21,69 +21,75 @@ class _EntryPageState extends State<EntryPage> {
   final List<Widget> _pages = [
     HomePage(),
     SearchPage(),
-    SettingsPage(),
+    const SettingsPage(),
   ];
   @override
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeProvider>(context);
-    return Scaffold(
-      body: Stack(
-        children: [
-          _pages[_selectedIndex],
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                color: Colors.black
-                    .withOpacity(0.7), // Semi-transparent background
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: BottomNavigationBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  type: BottomNavigationBarType.fixed,
-                  showSelectedLabels: false,
-                  showUnselectedLabels: false,
-                  selectedItemColor: Colors.white,
-                  unselectedItemColor: Colors.white54,
-                  currentIndex: _selectedIndex,
-                  onTap: (index) {
-                    setState(() {
-                      _selectedIndex = index;
-                    });
-                  },
-                  items: [
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Iconsax.home,
-                        color: themeNotifier.themeColor,
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
+          children: [
+            _pages[_selectedIndex],
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 0, left: 10,right:10),
+                padding: const EdgeInsets.only(bottom: 7,top: 7),
+                decoration: BoxDecoration(
+      
+                  color: Colors.black
+                      .withOpacity(0.7), // Semi-transparent background
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  
+                  child: BottomNavigationBar(
+                    
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    type: BottomNavigationBarType.fixed,
+                    showSelectedLabels: true,
+                    showUnselectedLabels: false,
+                    unselectedItemColor: Colors.white54,
+                    selectedItemColor: Colors.white,
+                    currentIndex: _selectedIndex,
+                    onTap: (index) {
+                      setState(() {
+                        _selectedIndex = index;
+                      });
+                    },
+                    items: [
+                      BottomNavigationBarItem(
+                        
+                        icon: Icon(
+                          Iconsax.home,
+                          color: themeNotifier.themeColor,
+                        ),
+                        label: '____',
                       ),
-                      label: 'Home',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Iconsax.search_normal,
-                        color: themeNotifier.themeColor,
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Iconsax.search_normal,
+                          color: themeNotifier.themeColor,
+                        ),
+                        label: '____',
                       ),
-                      label: 'Search',
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(
-                        Iconsax.user,
-                        color: themeNotifier.themeColor,
+                      BottomNavigationBarItem(
+                        icon: Icon(
+                          Iconsax.user,
+                          color: themeNotifier.themeColor,
+                        ),
+                        label: '____',
                       ),
-                      label: 'Settings',
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

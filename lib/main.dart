@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
 import 'package:minimal_chat_app/firebase_options.dart';
 import 'package:minimal_chat_app/pages/entry_page.dart';
 import 'package:minimal_chat_app/pages/settings_page.dart';
@@ -16,6 +17,13 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 void main() async {
 //Setting SystmeUIMode
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent, // Transparent background
+      systemNavigationBarIconBrightness: Brightness.dark, // Dark icons
+    ),
+  );
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -38,6 +46,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
@@ -46,8 +56,8 @@ class MyApp extends StatelessWidget {
       routes: {
         // '/login' : (context)=>LoginPage(onTap: () {  },),
         // '/register' : (context)=>RegisterPage(onTap: () {  },),
-        '/home': (context) => EntryPage(),
-        '/settings': (context) => SettingsPage()
+        '/home': (context) => const EntryPage(),
+        '/settings': (context) => const SettingsPage()
       },
     );
   }

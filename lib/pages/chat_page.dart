@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:minimal_chat_app/components/image_bubble.dart';
 import 'package:path_provider/path_provider.dart';
@@ -83,7 +84,7 @@ class _ChatPageState extends State<ChatPage> {
 
       for (var image in images) {
         log('Image path: ${image.path}');
-        await _sendImage(File(image.path));
+        await _sendImage(File(image.path), false);
       }
     } catch (e) {
       log('Error picking image: $e');
@@ -93,8 +94,26 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
+  Future<void> viewOnce() async {
+    try {
+      // Request necessary permissions
+      await requestPermissions();
+
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+      log('Image path: ${image?.path}');
+      await _sendImage(File(image!.path), true);
+    } catch (e) {
+      log('Error picking image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to pick image: $e')),
+      );
+    }
+  }
+
   // Function to send the image to Cloudinary
-  Future<void> _sendImage(File file) async {
+  Future<void> _sendImage(File file, bool isViewOnce) async {
     try {
       // Show a loading indicator during the upload
       showDialog(
@@ -106,7 +125,7 @@ class _ChatPageState extends State<ChatPage> {
       );
 
       // Call ChatService's sendImages method
-      await _chatService.sendImages(widget.receiverId, file);
+      await _chatService.sendImages(widget.receiverId, file, isViewOnce);
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Image sent successfully')),
@@ -177,7 +196,8 @@ class _ChatPageState extends State<ChatPage> {
               Rect.fromLTWH(0, 0, overlay!.paintBounds.size.height,
                   overlay!.paintBounds.size.width)),
           items: [
-            PopupMenuItem(
+            const PopupMenuItem(
+              value: 'save',
               child: Row(children: [
                 Icon(Icons.save_alt_sharp),
                 SizedBox(
@@ -188,9 +208,9 @@ class _ChatPageState extends State<ChatPage> {
                   style: TextStyle(fontSize: 16),
                 )
               ]),
-              value: 'save',
             ),
-            PopupMenuItem(
+            const PopupMenuItem(
+              value: 'delete',
               child: Row(children: [
                 Icon(
                   Icons.delete,
@@ -204,7 +224,6 @@ class _ChatPageState extends State<ChatPage> {
                   style: TextStyle(fontSize: 16),
                 )
               ]),
-              value: 'delete',
             ),
           ]);
       if (result == 'save') {
@@ -229,7 +248,8 @@ class _ChatPageState extends State<ChatPage> {
               Rect.fromLTWH(0, 0, overlay!.paintBounds.size.height,
                   overlay.paintBounds.size.width)),
           items: [
-            PopupMenuItem(
+            const PopupMenuItem(
+              value: 'copy',
               child: Row(children: [
                 Icon(Icons.copy),
                 SizedBox(
@@ -240,9 +260,9 @@ class _ChatPageState extends State<ChatPage> {
                   style: TextStyle(fontSize: 16),
                 )
               ]),
-              value: 'copy',
             ),
-            PopupMenuItem(
+            const PopupMenuItem(
+              value: 'delete',
               child: Row(children: [
                 Icon(
                   Icons.delete,
@@ -256,7 +276,6 @@ class _ChatPageState extends State<ChatPage> {
                   style: TextStyle(fontSize: 16),
                 )
               ]),
-              value: 'delete',
             ),
           ]);
       if (result == 'copy') {
@@ -306,24 +325,36 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+
     //scrollDown();
     return Scaffold(
       appBar: AppBar(
+        leading:  IconButton(onPressed: (){
+            Navigator.pop(context);
+          }, icon: Icon(Icons.arrow_back_ios_new_rounded),),
+        
         title: Row(
-          
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
           ProfilePicture(
-              name: widget.receiverName, radius: 20, fontsize: 20,
-            ),
-            SizedBox(width: 10,),
+            name: widget.receiverName,
+            radius: 20,
+            fontsize: 20,
+          ),
+          SizedBox(
+            width: 10,
+          ),
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
               widget.receiverName,
               style: TextStyle(fontSize: 18),
             ),
-            Text(widget.receiverEmail, style: TextStyle(fontSize: 16)),
+            Text(widget.receiverEmail, style: TextStyle(fontSize: 13)),
+            
           ]),
-        ]),
+          
+        ]
+        ),
         backgroundColor: Colors.transparent,
         foregroundColor: Theme.of(context).colorScheme.primary,
         elevation: 0,
@@ -363,7 +394,7 @@ class _ChatPageState extends State<ChatPage> {
           // scrollDown();
           return ListView(
               reverse: true,
-              padding: EdgeInsets.only(bottom: 100),
+              padding: EdgeInsets.only(top: 20,bottom: 100),
               children: snapshot.data!.docs
                   .map((doc) => _buildMessageItem(doc))
                   .toList());
@@ -429,10 +460,18 @@ class _ChatPageState extends State<ChatPage> {
                       _getTapPosition(position);
                     },
                     onLongPress: () {
+                      if(data["isViewOnce"] == false){
                       _showContextMenu(context, data["message"], doc.id,
                           data['senderId'], true);
+                      }
                     },
                     child: ImageBubble(
+                        hasOpened: data["hasOpened"],
+                        isViewOnce: data["isViewOnce"],
+                        messageId: doc.id,
+                        receiverId: isCurrentUser
+                            ? data["receiverId"]
+                            : data["senderId"],
                         url: data["message"],
                         isCurrentUser: isCurrentUser,
                         time: time.hour.toString()),
@@ -460,18 +499,76 @@ class _ChatPageState extends State<ChatPage> {
             // Semi-transparent black overlay
             borderRadius: BorderRadius.circular(20), // Rounded corners
           ),
-          margin: EdgeInsets.only(left: 5, right: 5, bottom: 10),
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          margin: EdgeInsets.only(left: 2, right: 3, bottom: 10),
+          padding: EdgeInsets.symmetric(vertical: 5),
           child: Row(
             children: [
               IconButton(
                   onPressed: () {
-                    pickImage();
+                    showModalBottomSheet(
+                      context: context,
+                      //background color for modal bottom screen
+
+                      //elevates modal bottom screen
+                      elevation: 10,
+                      // gives rounded corner to modal bottom screen
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      builder: (BuildContext context) {
+                        // UDE : SizedBox instead of Container for whitespaces
+                        return SizedBox(
+                            height: 200,
+                            child: Center(
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            IconButton(
+                                              icon: Icon(
+                                                Iconsax.gallery4,
+                                                size: 40,
+                                              ),
+                                              color: themeNotifier.themeColor,
+                                              onPressed: () {
+                                                pickImage();
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                            Text('Gallery')
+                                          ],
+                                        ),
+                                        Column(
+                                          children: [
+                                            IconButton(
+                                              icon: Icon(
+                                                Iconsax.shield_tick,
+                                                size: 40,
+                                              ),
+                                              color: themeNotifier.themeColor,
+                                              onPressed: () {
+                                                viewOnce();
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                            Text('View once')
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ]),
+                            ));
+                      },
+                    );
                   },
                   icon: Icon(
-                    Icons.image_rounded,
+                    Icons.add,
                     color: themeNotifier.themeColor,
-                    size: 35,
+                    size: 30,
                   )),
               Expanded(
                 child: TextField(

@@ -73,7 +73,7 @@ class ChatService {
   }
 
   // send images
-  Future<void> sendImages(String receiverId, File file) async {
+  Future<void> sendImages(String receiverId, File file, bool isViewOnce) async {
     try {
       final String currentUserId = _auth.currentUser!.uid;
       final String currentUserEmail = _auth.currentUser!.email.toString();
@@ -94,7 +94,9 @@ class ChatService {
       ImageMessage imgMsg = ImageMessage(
         senderID: currentUserId,
         senderEmail: currentUserEmail,
+        isViewOnce: isViewOnce,
         receiverID: receiverId,
+        hasOpened: false,
         message: imageUrl,
         type: "url",
         timestamp: Timestamp.now(),
@@ -113,7 +115,46 @@ class ChatService {
     }
   }
 
-  
+  Future<void> openedViewOnce(String messageId, String receiverId) async {
+  if (_auth.currentUser == null) {
+    log('No authenticated user found.');
+    return;
+  }
+
+  final String currentUserId = _auth.currentUser!.uid;
+
+  // Construct chat room ID
+  List<String> ids = [receiverId, currentUserId];
+  ids.sort();
+  String chatroomId = ids.join('_');
+
+  log('Path: chat_rooms/$chatroomId/messages/$messageId');
+
+  try {
+    // Check if the message has already been opened
+    DocumentSnapshot messageSnapshot = await _firestore
+        .collection('chat_rooms')
+        .doc(chatroomId)
+        .collection('messages')
+        .doc(messageId)
+        .get();
+
+    if (messageSnapshot.exists && messageSnapshot['hasOpened'] == false) {
+      // Update the hasOpened field
+      await _firestore
+          .collection('chat_rooms')
+          .doc(chatroomId)
+          .collection('messages')
+          .doc(messageId)
+          .update({'hasOpened': true});
+    } else {
+      log('Message has already been opened.');
+    }
+  } catch (e, stackTrace) {
+    log('Error updating hasOpened: $e', stackTrace: stackTrace);
+  }
+}
+
 
   Future<String> uploadToCloudinary(File file) async {
     try {
